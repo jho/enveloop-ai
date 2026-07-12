@@ -5,7 +5,7 @@ status: draft
 owner: "jho"
 stakeholders: []
 created: "2026-07-10"
-last-updated: "2026-07-10"
+last-updated: "2026-07-12"
 jira-epic: ""
 ---
 
@@ -18,6 +18,16 @@ jira-epic: ""
 **Problem:** Most budgeting tools treat AI as a shallow embedded feature instead of making the product usable by external agents. That makes it hard for an AI power user to ask an assistant to set up, analyze, or optimize a budget from the outside.
 
 **Why now:** AI agents are becoming a primary workflow surface, but budgeting products have not caught up. We want a product architecture that works well with desktop agents and always-on agents through MCP, without forcing the AI experience into a poorly embedded in-app chatbot.
+
+## Budget model
+
+Enveloop uses an envelope-style budgeting model:
+
+- money is assigned into envelopes inside a budget period
+- transactions are categorized so they can be charged against the right envelope
+- unassigned money stays available until the user or agent allocates it
+- unused envelope funds roll forward into the next budget period unless the user reallocates them
+- overspending in one envelope must be visible so the user or agent can rebalance the budget
 
 ## Goals
 
@@ -40,6 +50,8 @@ jira-epic: ""
 
 - Create an account and connect financial data sources
 - Ingest and display transactions
+- Categorize transactions and assign them to envelopes
+- Fund and review envelope balances within a budget period
 - Provide an MCP server so AI agents can inspect budget and transaction data
 - Support a simple family-viewer experience for progress review
 
@@ -56,9 +68,12 @@ jira-epic: ""
 | Account | A linked bank account, credit card, or similar financial source | Avoid “posting” or “entry” |
 | Transaction | A synced financial record from an account | Use this as the default record term |
 | Merchant | The payee or counterparty associated with a transaction when available | Avoid swapping with “vendor” unless needed |
-| Category | A spending bucket used for budgeting and analysis | Keep category names stable once chosen |
+| Category | A label assigned to a transaction for budgeting and analysis; usually mapped to an envelope | Keep category names stable once chosen |
+| Envelope | A budget bucket funded within a budget period | The product’s core budgeting unit |
 | Budget | The plan that assigns money across categories within a budget period | Avoid overloading it to mean the app itself |
 | Budget period | The time window used for planning, tracking, and reporting | Keep it flexible; do not lock it to month |
+| Available | The amount of money still left to assign or spend in an envelope | Avoid using as a generic account balance term |
+| Rollover | The carryforward of unused envelope funds into the next budget period | Keep the rule explicit in UX and agents |
 | Report | A generated or saved presentation of financial data | Prefer this over “view” for user-facing analytics |
 | MCP server | The integration layer external AI agents use to read and act on budget data | Keep this term consistent |
 
@@ -81,6 +96,16 @@ jira-epic: ""
 - [ ] The transaction list loads successfully for linked accounts
 - [ ] Imported transactions are visible with core fields such as date, amount, merchant, and category when available
 - [ ] The user can view transaction history without needing the MCP server
+
+### Categorization and envelope assignment
+
+**Story:** As an AI power user, I want to categorize transactions and assign them to envelopes so that the budget stays accurate.
+
+**Acceptance criteria:**
+- [ ] A transaction can be assigned to a category
+- [ ] A categorized transaction can be reflected against the correct envelope balance
+- [ ] Uncategorized transactions remain visible until they are assigned
+- [ ] Envelope balances update when categorized transactions are applied
 
 ### MCP access
 
@@ -126,5 +151,4 @@ jira-epic: ""
 | Q1 | Which bank data provider should we target first? | jho | TBD |
 | Q2 | Should the first MCP deployment be local-only, hosted-only, or both? | jho | TBD |
 | Q3 | What level of read access should the family viewer have in v1? | jho | TBD |
-| Q4 | Do we want manual transaction categorization in MVP or only read-only ingestion? | jho | TBD |
-
+| Q4 | How much categorization should be automated versus user-assisted in v1? | jho | TBD |
