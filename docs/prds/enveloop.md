@@ -24,6 +24,8 @@ jira-epic: ""
 Enveloop uses an envelope-style budgeting model:
 
 - a budget is created first, then envelopes are created inside it
+- initial setup can infer a starting envelope layout from recent transactions and income
+- transactions are auto-categorized by default during setup
 - money is assigned into envelopes inside a budget period
 - transactions are categorized so they can be charged against the right envelope
 - unassigned money stays available until the user or agent allocates it
@@ -95,6 +97,8 @@ Enveloop uses an envelope-style budgeting model:
 
 **Acceptance criteria:**
 - [ ] A user can create a budget
+- [ ] The system can infer a starting envelope layout from recent transactions and income
+- [ ] The system can auto-categorize transactions during setup by default
 - [ ] A user can create one or more envelopes within that budget
 - [ ] Each envelope has a name and an initial amount or funding rule
 - [ ] Budget setup completes before transaction categorization is required
@@ -136,6 +140,15 @@ Enveloop uses an envelope-style budgeting model:
 - [ ] The screen shows budget-period progress and recent transaction impact
 - [ ] The screen is understandable without requiring budget setup actions
 
+### Household edits
+
+**Story:** As a family member, I want to edit a transaction categorization so that the shared budget stays accurate.
+
+**Acceptance criteria:**
+- [ ] A family member can change a transaction category
+- [ ] The change updates the associated envelope balance
+- [ ] The update is visible to other household members
+
 ## Assumptions and constraints
 
 | Type | Item | Impact if wrong |
@@ -162,4 +175,4 @@ Enveloop uses an envelope-style budgeting model:
 | Q1 | Which bank data provider should we target first? | jho | TBD |
 | Q2 | Should the first MCP deployment be local-only, hosted-only, or both? | jho | TBD |
 | Q3 | What level of read access should the family viewer have in v1? | jho | TBD |
-| Q4 | How much categorization should be automated versus user-assisted in v1? | jho | TBD |
+| Q4 | What default auto-categorization rules should the setup flow use? | jho | TBD |
