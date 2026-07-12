@@ -23,6 +23,7 @@ jira-epic: ""
 
 Enveloop uses an envelope-style budgeting model:
 
+- a budget is created first, then envelopes are created inside it
 - money is assigned into envelopes inside a budget period
 - transactions are categorized so they can be charged against the right envelope
 - unassigned money stays available until the user or agent allocates it
@@ -69,8 +70,8 @@ Enveloop uses an envelope-style budgeting model:
 | Transaction | A synced financial record from an account | Use this as the default record term |
 | Merchant | The payee or counterparty associated with a transaction when available | Avoid swapping with “vendor” unless needed |
 | Category | A label assigned to a transaction for budgeting and analysis; usually mapped to an envelope | Keep category names stable once chosen |
-| Envelope | A budget bucket funded within a budget period | The product’s core budgeting unit |
-| Budget | The plan that assigns money across categories within a budget period | Avoid overloading it to mean the app itself |
+| Envelope | A named budget bucket created under a budget and funded within a budget period | The product’s core budgeting unit |
+| Budget | The parent plan that owns envelopes and defines how money is organized for a budget period | Avoid overloading it to mean the app itself |
 | Budget period | The time window used for planning, tracking, and reporting | Keep it flexible; do not lock it to month |
 | Available | The amount of money still left to assign or spend in an envelope | Avoid using as a generic account balance term |
 | Rollover | The carryforward of unused envelope funds into the next budget period | Keep the rule explicit in UX and agents |
@@ -87,6 +88,16 @@ Enveloop uses an envelope-style budgeting model:
 - [ ] A new user can create an account successfully
 - [ ] A linked account can ingest transactions from a supported provider
 - [ ] The user can see imported transactions after the sync completes
+
+### Budget setup
+
+**Story:** As an AI power user, I want to create a budget and define envelopes so that the product can organize money into spending buckets.
+
+**Acceptance criteria:**
+- [ ] A user can create a budget
+- [ ] A user can create one or more envelopes within that budget
+- [ ] Each envelope has a name and an initial amount or funding rule
+- [ ] Budget setup completes before transaction categorization is required
 
 ### Transaction review
 
