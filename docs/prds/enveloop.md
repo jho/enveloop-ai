@@ -24,13 +24,15 @@ jira-epic: ""
 Enveloop uses an envelope-style budgeting model:
 
 - a budget is created first, then envelopes are created inside it
-- initial setup can infer a starting envelope layout from recent transactions and income
-- transactions are auto-categorized by default during setup
+- initial setup links accounts, infers a starting envelope layout from recent transactions and income, and auto-categorizes by default
+- the user should not need to manually build a budget before getting value
 - money is assigned into envelopes inside a budget period
 - transactions are categorized so they can be charged against the right envelope
 - unassigned money stays available until the user or agent allocates it
 - unused envelope funds roll forward into the next budget period unless the user reallocates them
 - overspending in one envelope must be visible so the user or agent can rebalance the budget
+- envelopes can be renamed and rebalanced by the user or an authorized family member
+- transfers between envelopes should be supported as a first-class action
 
 ## Goals
 
@@ -51,18 +53,21 @@ Enveloop uses an envelope-style budgeting model:
 
 ### In scope
 
-- Create an account and connect financial data sources
+- Link financial accounts with minimal setup steps
 - Ingest and display transactions
-- Categorize transactions and assign them to envelopes
+- Auto-categorize transactions and assign them to envelopes
+- Infer and initialize a starting budget from recent financial activity
 - Fund and review envelope balances within a budget period
 - Provide an MCP server so AI agents can inspect budget and transaction data
-- Support a simple family-viewer experience for progress review
+- Support a simple mobile family-viewer experience for progress review and edits
+- Support core budget portability / export later, after adoption
 
 ### Out of scope
 
 - Alerting and notification workflows
 - Deep budgeting automation beyond the first setup / read / review loop
-- Advanced analytics dashboards beyond the MVP reporting surface
+- Advanced analytics dashboards beyond the first reporting surface
+- Local-first/offline-first architecture as a product pillar
 
 ## Domain terms
 
@@ -79,8 +84,19 @@ Enveloop uses an envelope-style budgeting model:
 | Rollover | The carryforward of unused envelope funds into the next budget period | Keep the rule explicit in UX and agents |
 | Report | A generated or saved presentation of financial data | Prefer this over “view” for user-facing analytics |
 | MCP server | The integration layer external AI agents use to read and act on budget data | Keep this term consistent |
+| Transfer | A movement of funds between envelopes or accounts | Keep explicit when rebalancing |
 
 ## Requirements
+
+### Setup automation
+
+**Story:** As an AI power user, I want to link my accounts and get an initial budget automatically so that I can use the product without manual setup work.
+
+**Acceptance criteria:**
+- [ ] A new user can link supported financial accounts with minimal setup steps
+- [ ] The system can infer a starting envelope layout from recent transactions and income
+- [ ] The system can auto-categorize transactions by default during setup
+- [ ] A usable initial budget exists after linking and sync completes
 
 ### Account onboarding
 
@@ -97,8 +113,6 @@ Enveloop uses an envelope-style budgeting model:
 
 **Acceptance criteria:**
 - [ ] A user can create a budget
-- [ ] The system can infer a starting envelope layout from recent transactions and income
-- [ ] The system can auto-categorize transactions during setup by default
 - [ ] A user can create one or more envelopes within that budget
 - [ ] Each envelope has a name and an initial amount or funding rule
 - [ ] Budget setup completes before transaction categorization is required
@@ -118,9 +132,11 @@ Enveloop uses an envelope-style budgeting model:
 
 **Acceptance criteria:**
 - [ ] A transaction can be assigned to a category
+- [ ] A transaction can be reassigned to a different category
 - [ ] A categorized transaction can be reflected against the correct envelope balance
 - [ ] Uncategorized transactions remain visible until they are assigned
 - [ ] Envelope balances update when categorized transactions are applied
+- [ ] A transfer between envelopes can update balances without being mistaken for spending
 
 ### MCP access
 
@@ -136,9 +152,10 @@ Enveloop uses an envelope-style budgeting model:
 **Story:** As a family viewer, I want to check budget progress so that I can understand whether spending is on track.
 
 **Acceptance criteria:**
-- [ ] A viewer can open a simplified progress screen
+- [ ] A viewer can open a simplified progress screen on mobile
 - [ ] The screen shows budget-period progress and recent transaction impact
 - [ ] The screen is understandable without requiring budget setup actions
+- [ ] A viewer can edit a transaction categorization on mobile
 
 ### Household edits
 
@@ -149,24 +166,34 @@ Enveloop uses an envelope-style budgeting model:
 - [ ] The change updates the associated envelope balance
 - [ ] The update is visible to other household members
 
+### AI-assisted analysis
+
+**Story:** As an AI power user, I want the system to help me analyze and optimize my budget so that I can improve my savings without doing the work manually.
+
+**Acceptance criteria:**
+- [ ] The system can propose envelope rebalancing recommendations
+- [ ] The system can identify recurring spending patterns from recent transactions
+- [ ] The system can generate or improve a report based on transaction and budget data
+- [ ] The analysis surface can be used by an external AI agent through MCP
+
 ## Assumptions and constraints
 
 | Type | Item | Impact if wrong |
 |------|------|-----------------|
 | Assumption | The best first value is agent-friendly budgeting, not a full consumer finance suite | If wrong, the product scope may need to expand significantly |
 | Assumption | Users are willing to connect bank or card accounts through a supported data provider | If wrong, transaction ingestion becomes a blocking problem |
-| Constraint | The product must work well with desktop and always-on agents | If wrong, the core differentiation weakens |
+| Constraint | The product must work well with desktop, always-on, and mobile agents | If wrong, the core differentiation weakens |
 | Constraint | Privacy and security expectations are high because the product touches financial data | If wrong, trust and adoption suffer |
 
 ## Dependencies and risks
 
 | Dependency / risk | Type | Owner | Notes |
 |-------------------|------|-------|------|
-| Bank data provider | Dependency | TBD | Needed for account linking and transaction ingestion |
+| Simple account-link provider | Dependency | TBD | Needed for account linking and transaction ingestion |
 | MCP server hosting | Dependency | TBD | Needed to expose data to agents reliably |
 | Authentication and authorization | Dependency | TBD | Must isolate each user’s financial data |
 | Privacy and security review | Risk | TBD | Financial data raises the bar for storage, transport, and access control |
-| iOS app surface | Dependency | TBD | Needed for the family viewer experience |
+| Mobile app surface | Dependency | TBD | Needed for the family viewer experience |
 
 ## Open questions
 
@@ -176,3 +203,4 @@ Enveloop uses an envelope-style budgeting model:
 | Q2 | Should the first MCP deployment be local-only, hosted-only, or both? | jho | TBD |
 | Q3 | What level of read access should the family viewer have in v1? | jho | TBD |
 | Q4 | What default auto-categorization rules should the setup flow use? | jho | TBD |
+| Q5 | Which mobile platform should we prioritize first? | jho | TBD |
