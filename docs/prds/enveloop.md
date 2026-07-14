@@ -5,7 +5,7 @@ status: draft
 owner: "jho"
 stakeholders: []
 created: "2026-07-10"
-last-updated: "2026-07-12"
+last-updated: "2026-07-14"
 jira-epic: ""
 ---
 
@@ -185,6 +185,32 @@ Enveloop uses an envelope-style budgeting model:
 - [ ] The system can identify recurring spending patterns from recent transactions
 - [ ] The system can generate or improve a report based on transaction and budget data
 - [ ] The analysis surface can be used by an external AI agent through MCP
+
+## Release phases
+
+### MVP
+
+The MVP should get a household from account linking to a usable budget with minimal manual work.
+
+Includes:
+- Setup automation
+- Account onboarding
+- Budget setup
+- Transaction review
+- Categorization and envelope assignment
+- MCP access
+- Family progress
+- Household edits
+
+### Post-MVP
+
+These capabilities should be designed for, but can ship after the first usable product:
+
+- Transaction cleanup automation
+- AI-assisted analysis
+- Core budget portability / export
+- Advanced reporting depth
+- Local-first/offline-first architecture
 
 ## Assumptions and constraints
 
