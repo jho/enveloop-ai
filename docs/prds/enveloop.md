@@ -126,6 +126,16 @@ Enveloop uses an envelope-style budgeting model:
 - [ ] Imported transactions are visible with core fields such as date, amount, merchant, and category when available
 - [ ] The user can view transaction history without needing the MCP server
 
+### Transaction cleanup automation
+
+**Story:** As an AI power user, I want the system to clean up transaction data automatically so that I do not have to do manual bookkeeping.
+
+**Acceptance criteria:**
+- [ ] The system can detect likely duplicate transactions and surface them as a cleanup task or auto-resolve them when confidence is high
+- [ ] The system can identify likely transfers and keep them from distorting spending analysis
+- [ ] The system can split or adjust transactions when needed for accurate categorization
+- [ ] Cleanup actions are driven by automation or AI rather than manual data-entry workflows
+
 ### Categorization and envelope assignment
 
 **Story:** As an AI power user, I want to categorize transactions and assign them to envelopes so that the budget stays accurate.
