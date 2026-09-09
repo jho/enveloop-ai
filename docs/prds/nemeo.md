@@ -1,27 +1,51 @@
 ---
-title: "Pace PRD (working name)"
-version: "0.3.0"
+title: "Nemeo PRD"
+version: "0.5.0"
 status: draft
 owner: "jho"
 stakeholders: []
 created: "2026-07-10"
-last-updated: "2026-09-07"
+last-updated: "2026-09-08"
 jira-epic: ""
 ---
 
-# Pace (working name)
+# Nemeo
 
 ## Overview
 
-**Summary:** Pace is an AI-friendly, tracking-based budgeting product that stays nearly headless for agent workflows while still giving individuals and families a simple app for progress and review. “Pace” is a working name; the final product rename is still to be decided.
+**Summary:** Nemeo is an AI-friendly, tracking-based budgeting product that stays nearly headless for agent workflows while still giving individuals and families a simple app for progress and review.
 
 **Problem:** Envelope budgeting asks people to pre-allocate and continuously rebalance money, which creates too much setup and maintenance. Users need a lower-friction way to track spending against a plan and understand whether current spending is sustainable. Most budgeting tools also treat AI as a shallow embedded feature instead of making the product usable by external agents.
 
 **Why now:** AI agents are becoming a primary workflow surface, but budgeting products have not caught up. We want a product architecture that works well with desktop agents and always-on agents through MCP, without forcing the AI experience into a poorly embedded in-app chatbot.
 
+## Product thesis
+
+Nemeo should feel like a budget that takes care of itself. The user sets up a reasonable plan once, then receives a clear assessment of whether spending is going well and what—if anything—needs adjustment.
+
+Product principles:
+
+- **Setup once, maintain by exception:** automate syncing, categorization, budget maintenance, and reporting; ask the user to intervene only when confidence is low or a decision matters.
+- **Tracking over envelopes:** compare real spending with targets and recommend adjustments without requiring users to assign every dollar to an envelope.
+- **Guidance over guilt:** explain whether the household is on track and offer practical next actions instead of treating every variance as failure.
+- **Useful AI, not a sales chatbot:** use AI to organize, explain, and recommend; do not use the product primarily to sell credit, investments, insurance, or other financial products.
+- **Affordable by design:** keep the subscription close to the underlying financial-data-provider cost and make pricing transparent.
+
+## Competitive positioning
+
+Monarch is the primary benchmark competitor for a polished, bank-connected household finance experience. Nemeo should compete by being easier to set up, requiring less ongoing maintenance, and costing materially less for users who primarily want budgeting and spending guidance.
+
+YNAB is a useful contrast: Nemeo intentionally avoids making envelope allocation the central user workflow. Rocket Money and similar products are also a contrast: Nemeo should not depend on aggressive cross-selling or upselling financial products to support the core budget experience.
+
+## Provider and pricing strategy
+
+Nemeo must not make the long-term product economics or onboarding experience depend on a single financial-data provider. SimpleFIN is the initial integration because its read-only model and observed reliability are attractive, but its Bridge subscription is paid separately by each user. Unless a commercial arrangement permits Nemeo to sponsor or bundle that subscription, SimpleFIN can make users feel like they are paying for two products.
+
+The provider abstraction is therefore an early MVP foundation, not a post-MVP cleanup task. SimpleFIN remains the first adapter, while the provider contract must support adding a provider that Nemeo can pay for and bundle into one transparent subscription. Candidate follow-on providers include Akoya and other OAuth/API aggregators, subject to coverage, reliability, onboarding, commercial terms, and target-bank testing.
+
 ## Budget model: tracking-based by default
 
-Pace uses tracking-based budgeting as the default workflow:
+Nemeo uses tracking-based budgeting as the default workflow:
 
 - a budget is created with spending categories and target amounts or limits for a budget period
 - initial setup links accounts, infers useful categories and starting targets from recent transactions and income, and auto-categorizes by default
@@ -41,6 +65,8 @@ Pace uses tracking-based budgeting as the default workflow:
 | Clear budget awareness | Family viewer can correctly tell whether a purchase affects budget health in usability checks | Not available | 4/5 scenarios answered correctly |
 | Fast signup | New user can reach authenticated onboarding | No baseline | Google sign-up/login completes in <= 2 minutes |
 | Actionable pacing | Users notice and understand an ahead-of-pace warning | Not available | >= 80% of test users correctly identify the affected category and action |
+| Low-maintenance use | Users can maintain an accurate budget without daily manual bookkeeping | Not available | >= 80% of pilot users report that the product requires little or no daily maintenance |
+| Affordable access | Total recurring price is close to the underlying financial-data-provider cost | Not available | Product price target is SimpleFIN cost plus a small, transparent premium; exact ceiling TBD |
 
 ## Users
 
@@ -54,10 +80,11 @@ Pace uses tracking-based budgeting as the default workflow:
 
 ### In scope
 
-- Link financial accounts through a native SimpleFIN connection flow with minimal setup steps
+- Establish a provider-neutral account-connection and ingestion contract before implementing the first provider adapter
+- Link financial accounts through a guided SimpleFIN connection flow with minimal setup steps
 - Support SimpleFIN transaction ingestion with the maximum historical backfill the provider makes available
 - Schedule SimpleFIN synchronization and AI categorization on provider-compatible cadences
-- Design the provider boundary so additional financial-data providers can be added later without changing the budget domain model
+- Implement the first provider adapter against the provider-neutral contract; additional providers must not require changes to the budget domain model
 - Ingest and display transactions
 - Identify and normalize transfers between linked accounts so they do not double-count against the budget
 - Auto-categorize transactions into tracking categories
@@ -74,6 +101,8 @@ Pace uses tracking-based budgeting as the default workflow:
 - Support a simple mobile family-viewer experience for progress review and edits
 - Support core budget portability / export later, after adoption
 - Support household invitations and role-based access for shared budget review
+- Keep the core product free of financial-product cross-selling and promotional upsell flows
+- Keep provider costs and whether they are bundled or user-paid explicit during onboarding and pricing
 
 ### Out of scope
 
@@ -82,12 +111,16 @@ Pace uses tracking-based budgeting as the default workflow:
 - Advanced analytics dashboards beyond the first reporting surface
 - Envelope allocation as the default budgeting model
 - Additional identity providers beyond Google in the first release
+- Paying for, sponsoring, or reselling SimpleFIN Bridge subscriptions without an explicit commercial agreement
+- Supporting multiple production financial-data providers in the first release; the abstraction is required, but SimpleFIN is the only required production adapter
 
 ## Domain terms
 
 | Term | Definition | Notes / avoid |
 |------|------------|---------------|
-| Provider | An external financial-data service used to connect accounts and import records | SimpleFIN is the first provider; keep provider-specific details behind an adapter |
+| Provider | An external financial-data service used to connect accounts and import records | SimpleFIN is the first adapter; provider-specific details stay behind the provider contract |
+| Provider adapter | The implementation that translates one provider’s authentication, account, transaction, balance, history, and sync behavior into Nemeo’s provider-neutral contract | Do not let provider SDKs or response shapes leak into budget logic |
+| Provider connection | A user-authorized link between Nemeo and one provider account or connection | A user may have multiple connections and providers |
 | Account | A linked bank account, credit card, or similar financial source | Avoid “posting” or “entry” |
 | Transaction | A synced financial record from an account | Use this as the default record term |
 | Merchant | The payee or counterparty associated with a transaction when available | Avoid swapping with “vendor” unless needed |
@@ -124,6 +157,22 @@ Pace uses tracking-based budgeting as the default workflow:
 - [ ] The system can infer starting categories and targets from recent transactions and income
 - [ ] The system can auto-categorize transactions by default during setup
 - [ ] A usable initial budget exists after linking and sync completes
+- [ ] Setup completes without requiring envelope creation, dollar assignment, or manual entry of every historical transaction
+- [ ] The user can review inferred categories, targets, and transfer classifications before relying on them
+- [ ] The system identifies only the setup exceptions that require user attention
+
+### Low-maintenance budget operation
+
+**Story:** As a budget owner, I want the budget to stay accurate and useful automatically so that I can spend a few minutes reviewing exceptions instead of maintaining every transaction by hand.
+
+**Acceptance criteria:**
+- [ ] Routine sync, categorization, transfer matching, pace calculation, and dashboard refresh happen without daily manual actions
+- [ ] The product surfaces a prioritized review queue for low-confidence categorization, unmatched transfers, balance discrepancies, and material budget changes
+- [ ] The user can review and resolve multiple related items in a single workflow
+- [ ] The product gives a clear overall assessment such as on track, needs attention, or insufficient data
+- [ ] The product explains the highest-impact adjustments available to the user
+- [ ] No core MVP workflow requires envelope allocation or daily transaction entry
+- [ ] A user can pause or disable automated recommendations without disabling account synchronization
 
 ### Account onboarding
 
@@ -182,9 +231,24 @@ Pace uses tracking-based budgeting as the default workflow:
 
 **Acceptance criteria:**
 - [ ] Imported accounts, transactions, balances, and sync results use provider-neutral product models
+- [ ] A versioned provider contract defines connection setup, account discovery, history limits, incremental sync, balances, pending/updated/removed records, errors, rate limits, and refresh capabilities
+- [ ] The first SimpleFIN adapter is implemented behind that contract rather than called directly from budget or reporting code
 - [ ] Provider-specific identifiers and raw metadata can be retained for reconciliation and troubleshooting
+- [ ] Provider-specific credentials, tokens, setup flows, and subscription/payment assumptions are isolated from the product profile and budget domain
 - [ ] Adding a future provider does not require changes to category targets, pace calculations, or reporting contracts
 - [ ] SimpleFIN remains the only required financial-data provider for the first release
+
+### Provider economics and migration
+
+**Story:** As a product owner, I want to change or add financial-data providers without changing the user’s budget so that Nemeo can preserve affordability and connection reliability.
+
+**Acceptance criteria:**
+- [ ] Provider selection is represented separately from budgets, accounts, and transactions
+- [ ] A user’s imported history, categories, transfer mappings, targets, and reports remain intact if a provider connection is disconnected or replaced
+- [ ] The product can distinguish provider cost paid by Nemeo from provider cost paid directly by the user
+- [ ] SimpleFIN’s user-paid subscription requirement, if applicable, is disclosed before the user begins linking accounts
+- [ ] Provider replacement and migration preserve stable internal accounts and transaction identities where a safe match exists, and surface records requiring review
+- [ ] Provider evaluation captures target-bank coverage, history availability, refresh behavior, reauthorization frequency, data quality, rate limits, setup fees, minimums, and per-connection costs
 
 ### Budget setup
 
@@ -375,9 +439,11 @@ The MVP should get a household from account linking to a usable budget with mini
 
 Includes:
 - Setup automation
+- Low-maintenance budget operation
 - Account onboarding
 - SimpleFIN ingestion
 - Provider extensibility boundary
+- Provider-neutral account-connection contract and first adapter boundary
 - Transfer correctness
 - Budget setup
 - Budget automation
@@ -415,12 +481,15 @@ These capabilities should be designed for, but can ship after the first usable p
 | Constraint | Budget pace warnings must be understandable and conservative enough to avoid alert fatigue | If wrong, users may ignore the product |
 | Constraint | Transfer classification must be conservative and explainable because false positives can hide real spending | If wrong, budget totals and user trust suffer |
 | Constraint | Budget automation must be reversible and must not overwrite transactions or silently change protected categories | If wrong, users lose control of their financial history |
+| Constraint | Pricing must remain close to the SimpleFIN cost and must not require revenue from financial-product referrals | If wrong, the product may become unaffordable or lose user trust |
 
 ## Dependencies and risks
 
 | Dependency / risk | Type | Owner | Notes |
 |-------------------|------|-------|------|
-| SimpleFIN integration | Dependency | TBD | Required for native account linking, provider-available historical backfill, sync, and balance reconciliation |
+| Provider-neutral connection and ingestion contract | Dependency | TBD | Must be designed and implemented before the SimpleFIN adapter so future providers can be added without changing budgeting or reporting logic |
+| SimpleFIN integration | Dependency | TBD | First adapter for guided account linking, provider-available historical backfill, sync, and balance reconciliation; user-paid subscription economics remain an open commercial constraint |
+| Follow-on provider evaluation | Dependency | TBD | Needed to determine whether Nemeo can bundle connectivity into one affordable subscription; evaluate Akoya and other OAuth/API providers against target-bank coverage and economics |
 | MCP server hosting | Dependency | TBD | Needed to expose data to agents reliably |
 | Authentication and authorization | Dependency | TBD | Must isolate each user’s financial data |
 | Google identity integration | Dependency | TBD | Needed for low-friction MVP signup/login; should leave room for additional providers |
@@ -451,3 +520,6 @@ These capabilities should be designed for, but can ship after the first usable p
 | Q15 | What confidence threshold should send an AI categorization to review instead of applying it automatically? | jho | Before categorization implementation |
 | Q16 | What is the retention and deletion policy for disconnected provider data, audit history, and user accounts? | jho | Before implementation |
 | Q17 | Which household roles and permissions are required for the first release? | jho | Before household implementation |
+| Q18 | What exact monthly price ceiling keeps the product only marginally more expensive than connectivity and AI costs while covering hosting and operations? | jho | Before pricing implementation |
+| Q19 | Can SimpleFIN offer sponsored, bundled, reseller, or developer pricing that avoids requiring each Nemeo user to maintain a separate Bridge subscription? | jho | Before committing to SimpleFIN as the only customer-facing connection path |
+| Q20 | Which provider should be the first bundled-cost alternative to SimpleFIN, and what minimum target-bank coverage is required? | jho | Before production pricing and launch |

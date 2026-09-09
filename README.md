@@ -1,4 +1,4 @@
-# Enveloop
+# Nemeo
 
 This repository starts with a small event-modeled budgeting system for a single person.
 
@@ -15,7 +15,7 @@ The first model covers:
 - transaction sync
 - transaction search and review
 - expense categorization
-- monthly envelope-style budgeting
+- monthly tracking-based budgeting
 
 The app implementation will come later. This repo begins with the model so the design can be
 reviewed before code is written.
