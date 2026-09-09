@@ -1,21 +1,32 @@
-# Nemeo
+# Nemeo MVP Event Model
 
-This repository starts with a small event-modeled budgeting system for a single person.
+This event model describes the PRD’s MVP happy path from account creation and SimpleFIN linking
+through provider-neutral ingestion, categorization, transfer handling, tracking-budget setup,
+pace reporting, household collaboration, and authorized MCP access. Post-MVP capabilities remain
+outside the spine and are recorded in the PRD.
 
-## Contents
+## Live view
 
-- [`budgeting.em`](budgeting.em): the event model source
+```bash
+em watch budgeting.em -o budgeting.svg
+```
+
+Static render:
+
+```bash
+em render budgeting.em -o budgeting.svg
+```
+
+## Patterns legend
+
+- State Change — UI → Command → Event
+- State View — Event(s) → Read Model → UI
+- Automation — Read Model → Processor → Command → Event
+- Translation — Boundary → Translation → Command → Event
+
+## Artifacts
+
+- [`budgeting.em`](budgeting.em): model source
 - [`budgeting.svg`](budgeting.svg): rendered diagram
-
-## Scope
-
-The first model covers:
-
-- account setup
-- transaction sync
-- transaction search and review
-- expense categorization
-- monthly tracking-based budgeting
-
-The app implementation will come later. This repo begins with the model so the design can be
-reviewed before code is written.
+- [`.event-modeling.md`](.event-modeling.md): resumable modeling state and open questions
+- [`docs/prds/nemeo.md`](docs/prds/nemeo.md): source PRD
