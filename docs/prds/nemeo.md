@@ -13,11 +13,16 @@ jira-epic: ""
 
 ## Overview
 
-**Summary:** Nemeo is an AI-friendly, tracking-based budgeting product that stays nearly headless for agent workflows while still giving individuals and families a simple app for progress and review.
+**Summary:** Nemeo is an AI-friendly, tracking-based budgeting product that stays nearly headless for agent workflows while still giving individuals and families a simple, installable web app for progress and review.
 
 **Problem:** Envelope budgeting asks people to pre-allocate and continuously rebalance money, which creates too much setup and maintenance. Users need a lower-friction way to track spending against a plan and understand whether current spending is sustainable. Most budgeting tools also treat AI as a shallow embedded feature instead of making the product usable by external agents.
 
 **Why now:** AI agents are becoming a primary workflow surface, but budgeting products have not caught up. We want a product architecture that works well with desktop agents and always-on agents through MCP, without forcing the AI experience into a poorly embedded in-app chatbot.
+
+**MVP setup outcome:** A new user should be able to sign up, complete minimal account setup, and
+arrive at the start of a budget period with a usable budget managed by Nemeo. Categories, targets,
+transaction categorization, transfer treatment, and pace-alert readiness should be prepared by the
+system, with the user asked to review only exceptions or decisions that materially affect trust.
 
 ## Product thesis
 
@@ -52,7 +57,9 @@ Nemeo uses tracking-based budgeting as the default workflow:
 - the user should see useful tracking results without manually assigning every dollar
 - transactions count against the relevant category as they are imported and categorized
 - each category shows actual spend, target, remaining amount, and pace status
-- pace is calculated from elapsed time in the budget period; the system warns when projected spend is likely to exceed the target
+- pace is calculated from elapsed calendar time in the budget period: expected spend is the category target multiplied by the fraction of the period elapsed
+- the first pace model is intentionally simple and leaves room before warning; warning tolerance is modeled per category with system-provided defaults and optional user overrides, while exact default values, variance-aware buffers, and more predictive refinements remain separate decisions or post-MVP refinements
+- when actual spending exceeds expected pace plus the category tolerance, MVP presents an in-product warning with dismiss and snooze controls; mobile push and SMS channels are future extensions
 - users can adjust targets without moving money between envelopes
 - optional envelope-style allocation may be supported later, but it is not the primary MVP workflow
 
@@ -78,6 +85,15 @@ Nemeo uses tracking-based budgeting as the default workflow:
 
 ## Scope
 
+### Client strategy
+
+MVP uses a responsive web application designed as an installable Progressive Web App (PWA). It
+should support an app icon, standalone launch, responsive touch interactions, and the minimum
+notification behavior that the supported browsers provide. A native mobile wrapper, such as
+Capacitor, remains an option after the web experience proves the product and native APIs or app
+store distribution justify the additional packaging and release work. A separate native mobile
+client is not an MVP requirement.
+
 ### In scope
 
 - Establish a provider-neutral account-connection and ingestion contract before implementing the first provider adapter
@@ -98,7 +114,7 @@ Nemeo uses tracking-based budgeting as the default workflow:
 - Provide a basic current-month dashboard for cashflow, budget progress, and top spending destinations
 - Sign up and log in with Google; retain an extensible provider model for future auth providers
 - Provide an MCP server so AI agents can inspect budget and transaction data
-- Support a simple mobile family-viewer experience for progress review and edits
+- Support a simple mobile family-viewer experience through the responsive installable web app
 - Support core budget portability / export later, after adoption
 - Support household invitations and role-based access for shared budget review
 - Keep the core product free of financial-product cross-selling and promotional upsell flows
@@ -113,6 +129,7 @@ Nemeo uses tracking-based budgeting as the default workflow:
 - Additional identity providers beyond Google in the first release
 - Paying for, sponsoring, or reselling SimpleFIN Bridge subscriptions without an explicit commercial agreement
 - Supporting multiple production financial-data providers in the first release; the abstraction is required, but SimpleFIN is the only required production adapter
+- Maintaining a separate native mobile client in the first release
 
 ## Domain terms
 

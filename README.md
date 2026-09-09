@@ -30,3 +30,5 @@ em render budgeting.em -o budgeting.svg
 - [`budgeting.svg`](budgeting.svg): rendered diagram
 - [`.event-modeling.md`](.event-modeling.md): resumable modeling state and open questions
 - [`docs/prds/nemeo.md`](docs/prds/nemeo.md): source PRD
+- [`docs/architecture/decisions.md`](docs/architecture/decisions.md): architecture decision backlog
+- [`docs/architecture/adrs/`](docs/architecture/adrs/): accepted architecture decision records
