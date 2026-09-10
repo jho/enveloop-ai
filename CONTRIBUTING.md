@@ -13,7 +13,6 @@ the issue they resolve.
 
    ```bash
    pre-commit run --all-files
-   em validate budgeting.em
    git diff --check
    ```
 
@@ -39,7 +38,8 @@ in the pull-request template and record unresolved risks or follow-up issues.
 The repository currently has documentation-oriented CI because application code does not exist yet:
 
 - Markdown hygiene and linting through pre-commit.
-- Event Model validation.
+- Event Model validation through pre-commit.
+- Event Model rendering and generated-SVG freshness.
 - Git whitespace checks.
 
 As implementation begins, add type-checking, tests, database migration checks, provider contract

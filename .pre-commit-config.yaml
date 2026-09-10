@@ -14,3 +14,12 @@ repos:
     hooks:
       - id: markdownlint
         types: [markdown]
+
+  - repo: local
+    hooks:
+      - id: event-model-validation
+        name: validate event model
+        entry: npx --yes @milehimikey/em@1.8.1 validate budgeting.em
+        language: system
+        pass_filenames: false
+        files: ^budgeting\.em$
